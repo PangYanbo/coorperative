@@ -83,7 +83,7 @@ public class PTprocess {
 		try{
 			BufferedReader br = new BufferedReader(new FileReader(filepath));
 			BufferedReader br2 = new BufferedReader(new FileReader(filepath2));
-			BufferedWriter bw = new BufferedWriter(new FileWriter("D:/training data/TokyoPT/For-TransportMode.csv"));
+			BufferedWriter bw = new BufferedWriter(new FileWriter("D:/training data/TokyoPT/Multi-ModalTransport.csv"));
 	
 			bw.write("Transport,TripTime,isNearStation,TripPurpose,TripDistance,avgSpeed");
 //			bw.write("pid,trip_no,subtrip_no,sex_code,age_code,address_code,office,dep_zone,arr_zone,facility,arrive_facility,work_code,purpose_code,mfactor,mfactor2,transport,trans_num,deptime,deplon,deplat,arrtime,arrlon,arrlat,route_type,dep_station,arr_station");
@@ -102,8 +102,10 @@ public class PTprocess {
 			}
 			br2.close();
 			
+			long t1 = System.currentTimeMillis();
+			
 			while((line=br.readLine())!=null){
-				long t1 = System.currentTimeMillis();
+			
 				String tokens[] = line.split(",",-1);
 				
 				int pid = Integer.valueOf(tokens[0]);
@@ -186,15 +188,16 @@ public class PTprocess {
 					
 				bw.write(log);
 				bw.newLine();
-				long t2 = System.currentTimeMillis();
-				long t3 = (t2 - t1) / 1000;
-				
-				System.out.println(String.format("  Time : %s", t3));
 				
 //				}
 				}
 //				}
 				}
+			
+			long t2 = System.currentTimeMillis();
+			long t3 = (t2 - t1) / 1000;
+			
+			System.out.println(String.format("  Time : %s", t3));
 			
 			br.close();
 			bw.close();

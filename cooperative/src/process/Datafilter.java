@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -44,6 +45,18 @@ public class Datafilter {
 			// open file reader
 			BufferedReader br = new BufferedReader(new FileReader(filepath));
 			BufferedWriter bw = new BufferedWriter(new FileWriter("/home/t-iho/grid/0/tmp/ktsubouc/gps_"+day+"filter.csv"));
+			BufferedReader br2 = new BufferedReader(new FileReader("input-data/ring.csv"));
+			String line2 = null;
+			List<Point>boundaries = new ArrayList<Point>();
+			
+			while((line2=br2.readLine())!=null){
+				String tokens[] = line2.split(",");
+				double lon = Double.parseDouble(tokens[0]);
+				double lat = Double.parseDouble(tokens[1]);
+				boundaries.add(new Point(lat,lon));
+			}
+			br2.close();
+			
 			// remove header line
 			String line = br.readLine();
 
@@ -58,6 +71,7 @@ public class Datafilter {
 //				for(int i=0;i<tokens.length;i++){
 //					System.out.println(tokens[i]);
 //				}
+
 				if(tokens[0].length()!=0&&tokens[0]!=null&&tokens[0]!="null"){
 					String uid = tokens[0];
 					String did = tokens[1];
@@ -68,6 +82,8 @@ public class Datafilter {
 				
 			//		System.out.println(uid+","+did+","+lat+","+lon+","+date+","+points.lat+","+points.lon);
 
+					//Tokyo prefecture GPS
+					if(points.isPolygonContainsPoint(boundaries)){
 						if(!userlog.containsKey(did)){
 							countid++;
 						    records = new ArrayList<Point>();
@@ -80,6 +96,7 @@ public class Datafilter {
 							userlog.get(did).record.add(points);
 						}					
 	//					preid=did;
+			}
 				}
 			}
 		//output sample
@@ -90,27 +107,7 @@ public class Datafilter {
 			}
 			
 			TreeSet<String>sortedKey = new TreeSet<String>(userlog.keySet());
-			
-			//à¬ì˙ä˙îrèò
-			
-	/*		Comparator<STPoint> comp = new Comparator<STPoint>() {
-				public int compare(STPoint a,STPoint b) {
-					Date ts = a.isTimeSpan() ? a.getDtStart() : a.getTimeStamp();
-					Date te = b.isTimeSpan() ? b.getDtEnd()   : b.getTimeStamp();
-					return ts.compareTo(te);
-				}
-			};
-			for(STPoint p:result.keySet()) {
-				List<STPoint> cluster = result.get(p);
-				Collections.sort(cluster,comp);
-				STPoint p0 = cluster.get(0);
-				STPoint p1 = cluster.get(cluster.size()-1);
 				
-				p.setTimeSpan(p0.isTimeSpan()?p0.getDtStart():p0.getTimeStamp(),p1.isTimeSpan()?p1.getDtEnd():p1.getTimeStamp());
-			}
-			return result
-			*/
-			
 			
 			for(String _did:sortedKey){
 				if(userlog.get(_did).record.size()<101)
@@ -118,6 +115,13 @@ public class Datafilter {
 					countLogs[userlog.get(_did).record.size()]++;
 				}
 				
+				 Comparator<Point> comparator = new Comparator<Point>(){  
+			            public int compare(Point p1, Point p2) { 
+			                    return p1.compareTo(p2);  
+			                }  
+				 };
+				 Collections.sort(userlog.get(_did).record,comparator);
+				 
 				for(Point points:userlog.get(_did).record){
 						//if(users.record.size()>=20){
 							String tripline= userlog.get(_did).Uid+","

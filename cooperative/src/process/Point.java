@@ -1,9 +1,7 @@
 package process;
 
 import java.util.Date;
-
-
-
+import java.util.List;
 
 import org.apache.commons.lang.math.LongRange;
 
@@ -26,6 +24,11 @@ public class Point implements Comparable<Point>{
 		this.lat=lat;
 		this.lon=lon;
 		setTimeSpan(start, end);
+	}
+	
+	public Point(double lat, double lon){
+		this.lat=lat;
+		this.lon=lon;
 	}
 	
 	public Point(Double _lat,Double _lon,Date _time){
@@ -95,7 +98,6 @@ public class Point implements Comparable<Point>{
 		
 		return t0.compareTo(t1);
 	}
-
 	
     public double distance(Point p) {
     	double a  = WGS84_EQUATOR_RADIUS;
@@ -123,4 +125,32 @@ public class Point implements Comparable<Point>{
     		return String.format("%s (%f,%f)", _start, getLon(), getLat());
     	}
     }
+
+	public boolean isPolygonContainsPoint(List<Point> mPoints) {
+		int nCross = 0;  
+        for (int i = 0; i < mPoints.size(); i++) {  
+            Point p1 = mPoints.get(i);  
+            Point p2 = mPoints.get((i + 1) % mPoints.size());  
+          
+            if (p1.getLon() == p2.getLat()) 
+                continue;  
+            
+            if (this.getLon() < Math.min(p1.getLon(), p2.getLon()))  
+                continue;  
+            
+            if (this.getLon() >= Math.max(p1.getLon(), p2.getLon()))  
+                continue;  
+        
+            double x = (double) (this.getLon() - p1.getLon()) * (double) (p2.getLat() - p1.getLat())  
+                    / (double) (p2.getLon() - p1.getLon()) + p1.getLat();  
+            if (x > this.getLat())  
+                nCross++; 
+        }  
+      
+        return (nCross % 2 == 1);  
+	}
+
+
+
+	
 }

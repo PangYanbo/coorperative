@@ -99,11 +99,8 @@ public class kddi2011 {
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
 		String filepath = "D:/training data/KDDI/#201111.CDR-data";
-//		String filepath2 = "D:/training data/stationLL.csv";
-//		
-//		File datadir = new File("D:/training data/KDDI/#201111.CDR-data");	// input data folder(max_activity_uid/avg_activity_uid)
-//		File outdir  = new File("D:/training data/KDDI/#201111.CDR-data");	//output folder
 		
+		BufferedReader br2 = new BufferedReader(new FileReader("D:/training data/stationLL.csv"));
 		
 		try{
 			Vector<String> vecFile = new Vector<String>();  
@@ -116,13 +113,7 @@ public class kddi2011 {
 	            System.out.println(fileName);  
 	            if(fileName.contains("stay.csv")){
 	            	BufferedReader br = new BufferedReader(new FileReader(fileName));
-        			BufferedReader br2 = new BufferedReader(new FileReader("D:/training data/stationLL.csv"));
-        			
-        	
-        			
-//        			bw.write("pid,trip_no,subtrip_no,sex_code,age_code,address_code,office,dep_zone,arr_zone,facility,arrive_facility,work_code,purpose_code,mfactor,mfactor2,transport,trans_num,deptime,deplon,deplat,arrtime,arrlon,arrlat,route_type,dep_station,arr_station");
-
-        			
+        		       			
         			String line = br.readLine();
         			String line2 = br2.readLine();
         			

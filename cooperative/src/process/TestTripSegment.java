@@ -43,6 +43,8 @@ public class TestTripSegment {
 			// open file reader
 			BufferedReader br = new BufferedReader(new FileReader(filepath));
 			BufferedWriter bw = new BufferedWriter(new FileWriter("D:/training data/TokyoPT/2-0005trip.csv"));
+			bw.write("uid,tripid,start time,end time,start lon,start lat,end lon,end lat,trip distance,trip time,average speed");
+			bw.newLine();
 			// remove header line
 			String line = br.readLine();
 
@@ -50,7 +52,7 @@ public class TestTripSegment {
 			List<Point>records = null;
 			String preid =null;	
 			
-			TripSegmentation detector = new TripSegmentation(20,5,4000d,150d,3);
+			TripSegmentation detector = new TripSegmentation(20,4,500d,200d,2);
 			
 			while( (line=br.readLine())!=null){ 
 				String[] tokens  = line.split(",",-1);	// split line with comma "	"
@@ -99,7 +101,10 @@ public class TestTripSegment {
 										+trip.getOrigin().lon+","
 										+trip.getDestination().lat+","
 										+trip.getDestination().lon+","
-										+trip.getDistance()+"m";
+										+String.format("%.2f", trip.getDistance())+"m"+","
+										+String.format("%.2f", trip.getTriptime())+"min"+","
+										+String.format("%.2f", trip.getSpeed())+"m/s";
+							
 						bw.write(tripline);
 						bw.newLine();
 					}

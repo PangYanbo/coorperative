@@ -52,7 +52,7 @@ public class point {
 			boolean nearStation = false;
 			for(int i =0;i<=stations.size()-1;i++){
 				point P = stations.get(i);
-				if(distance(this.lat,this.lon,P.lat,P.lon)<700){
+				if(distance(this.lat,this.lon,P.lat,P.lon)<100){
 					nearStation = true;
 					break;
 				}

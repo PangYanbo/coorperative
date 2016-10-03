@@ -28,18 +28,19 @@ public class Trip{
 		return this.trajectory.get(this.trajectory.size()-1);
 	}
 	
-	public double tripdistance(){
-		double dist=0;
-		
-		return dist;
-	}
 	
 	public double getDistance(){
-		double temp = 0;
-		for(int i=0;i<this.trajectory.size()-1;i++){
-			temp += this.trajectory.get(i).distance(this.trajectory.get(i+1));
-		}
-		return temp;
+		
+			return this.getOrigin().distance(this.getDestination());
+	
+	}
+	
+	public double getTriptime(){
+		return  (this.getDestination().getTimeStamp().getTime()-this.getOrigin().getTimeStamp().getTime())/(60*1000);
+	}
+	
+	public double getSpeed(){
+		return this.getDistance()/(this.getTriptime()*60);
 	}
 	
 	public List<Point> getTrajectory(){
