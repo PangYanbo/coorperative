@@ -13,10 +13,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.TreeSet;
 
 
@@ -31,7 +34,7 @@ public class Datafilter {
 		return null;
 	}
 	
-	
+
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		System.out.println("Enter the date");
@@ -45,7 +48,7 @@ public class Datafilter {
 			// open file reader
 			BufferedReader br = new BufferedReader(new FileReader(filepath));
 			BufferedWriter bw = new BufferedWriter(new FileWriter("/home/t-iho/grid/0/tmp/ktsubouc/gps_"+day+"filter.csv"));
-			BufferedReader br2 = new BufferedReader(new FileReader("input-data/ring.csv"));
+			BufferedReader br2 = new BufferedReader(new FileReader("/home/t-iho/ring.csv"));
 			String line2 = null;
 			List<Point>boundaries = new ArrayList<Point>();
 			
@@ -82,21 +85,20 @@ public class Datafilter {
 				
 			//		System.out.println(uid+","+did+","+lat+","+lon+","+date+","+points.lat+","+points.lon);
 
-					//Tokyo prefecture GPS
-					if(points.isPolygonContainsPoint(boundaries)){
+					//Tokyo prefecture
 						if(!userlog.containsKey(did)){
 							countid++;
 						    records = new ArrayList<Point>();
 							userlog.put(did, new Agent(uid,did,records));
 						}
-	//					records.add(points);
+						if(userlog.get(did).record.contains(points))
+						{continue;}
+						userlog.get(did).record.add(points);
+						
 			//avoid the same point
-						if(!userlog.get(did).record.contains(date))
-						{
-							userlog.get(did).record.add(points);
-						}					
-	//					preid=did;
-			}
+						
+
+			
 				}
 			}
 		//output sample
