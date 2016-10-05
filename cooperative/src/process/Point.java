@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.apache.commons.lang.math.LongRange;
 
+import PTdata.point;
+
 public class Point implements Comparable<Point>{
 	Double lat;
 	Double lon;
@@ -150,7 +152,17 @@ public class Point implements Comparable<Point>{
         return (nCross % 2 == 1);  
 	}
 
-
+	public boolean nearstation(List<Point>stations){
+		boolean nearStation = false;
+		for(int i =0;i<=stations.size()-1;i++){
+			Point P = stations.get(i);
+			if(this.distance(P)<500){
+				nearStation = true;
+				break;
+			}
+		}
+		return nearStation;
+	}
 
 	
 }

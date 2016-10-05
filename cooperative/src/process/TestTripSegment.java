@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import PTdata.point;
+
 
 
 
@@ -35,19 +37,31 @@ public class TestTripSegment {
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		
 
 		
 		String filepath = "D:/training data/KDDI/2_data/1_gps/2_0005.csv";
 		try {
 			// open file reader
 			BufferedReader br = new BufferedReader(new FileReader(filepath));
+			BufferedReader br2 = new BufferedReader(new FileReader("D:/training data/stationLL.csv"));
 			BufferedWriter bw = new BufferedWriter(new FileWriter("D:/training data/TokyoPT/2-0005trip.csv"));
-			bw.write("uid,tripid,start time,end time,start lon,start lat,end lon,end lat,trip distance,trip time,average speed");
+			bw.write("uid,tripid,start time,end time,start lon,start lat,end lon,end lat,trip distance,trip time,average speed,points counts,matchstation");
 			bw.newLine();
 			// remove header line
 			String line = br.readLine();
-
+			String line2 = br2.readLine();
+			
+			List<Point>Station = new ArrayList<Point>();
+			
+			while((line2=br2.readLine())!=null){
+				String tokens[] = line2.split(",");
+				double lon = Double.parseDouble(tokens[0]);
+				double lat = Double.parseDouble(tokens[1]);
+				Station.add(new Point(lat,lon));
+			}
+			br2.close();
+			
+			
 			List<Agent>agents = new ArrayList<Agent>();
 			List<Point>records = null;
 			String preid =null;	
@@ -89,10 +103,12 @@ public class TestTripSegment {
 				int tripsequence = 0;
 				if(users.record.size()>10){
 				detector.segment(users.record);
+				users.staypoint=detector.listStayPoints();
 				users.trips=detector.listTrips();
 				countTrips[users.trips.size()]++;
 				for(Trip trip:users.trips){
 						tripsequence++;
+						boolean matchstation = trip.getDestination().nearstation(Station)&&trip.getOrigin().nearstation(Station);
 						String tripline= users.Uid+","
 										+tripsequence+","
 										+trip.getOrigin().getTimeStamp()+","
@@ -103,8 +119,9 @@ public class TestTripSegment {
 										+trip.getDestination().lon+","
 										+String.format("%.2f", trip.getDistance())+"m"+","
 										+String.format("%.2f", trip.getTriptime())+"min"+","
-										+String.format("%.2f", trip.getSpeed())+"m/s";
-							
+										+String.format("%.2f", trip.getSpeed())+"m/s"+","
+										+trip.trajectory.size()+","
+										+matchstation;
 						bw.write(tripline);
 						bw.newLine();
 					}
@@ -126,6 +143,8 @@ public class TestTripSegment {
 			for(Point stay:stays) {
 				System.out.println("\t" + stay);
 			}
+			
+			System.out.println(stays.size());
 			
 			List<Trip> trips = detector.listTrips();
 			for(Trip trip:trips) {

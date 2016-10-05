@@ -7,6 +7,7 @@ public class Agent{
 	String Uid;
 	String Did;
 	List<Point>record= new ArrayList<Point>();
+	List<Point>staypoint = new ArrayList<Point>();
 	List<Trip>trips = new ArrayList<>();
 	
 	public Agent(String Uid,String Did,List<Point>record){

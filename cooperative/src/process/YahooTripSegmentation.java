@@ -68,22 +68,24 @@ public class YahooTripSegmentation {
 				
 				String[] tokens  = line.split("	",-1);	// split line with comma "	"
 				if(tokens[0].length()!=0&&tokens[0]!=null&&tokens[0]!="null"){
-				String uid = tokens[0];
-				String did = tokens[1];
-				Double lat = Double.parseDouble(tokens[2]);
-				Double lon = Double.parseDouble(tokens[3]);
-				Date date = toDate(tokens[4]);
-				Point points = new Point(lat,lon,date);
-					
-			//		System.out.println(uid+","+did+","+lat+","+lon+","+date+","+points.lat+","+points.lon);
-					
-				if(!userlog.containsKey(did)){
-				    records = new ArrayList<Point>();
-					userlog.put(did, new Agent(uid,did,records));
-				}
-				if(userlog.get(did).record.contains(points))
-				{continue;}
-				userlog.get(did).record.add(points);
+					String uid = tokens[0];
+					if(!uid.equals("null")){
+					String did = tokens[1];
+					Double lat = Double.parseDouble(tokens[2]);
+					Double lon = Double.parseDouble(tokens[3]);
+					Date date = toDate(tokens[4]);
+					Point points = new Point(lat,lon,date);
+						
+				//		System.out.println(uid+","+did+","+lat+","+lon+","+date+","+points.lat+","+points.lon);
+						
+					if(!userlog.containsKey(did)){
+					    records = new ArrayList<Point>();
+						userlog.put(did, new Agent(uid,did,records));
+					}
+					if(userlog.get(did).record.contains(points))
+					{continue;}
+					userlog.get(did).record.add(points);
+					}
 				}
 			}
 		//output sample
@@ -106,7 +108,7 @@ public class YahooTripSegmentation {
 				 Collections.sort(userlog.get(_did).record,comparator);
 				 
 					int tripsequence =0;
-						if(userlog.get(_did).record.size()>=10){
+						if(userlog.get(_did).record.size()>=10&&userlog.get(_did).Uid!=null&&userlog.get(_did).Uid!="null"){
 							detector.segment(userlog.get(_did).record);
 							userlog.get(_did).trips=detector.listTrips();
 							countTrips[userlog.get(_did).trips.size()]++;

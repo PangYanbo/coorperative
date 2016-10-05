@@ -47,8 +47,11 @@ public class Datafilter {
 		try {
 			// open file reader
 			BufferedReader br = new BufferedReader(new FileReader(filepath));
-			BufferedWriter bw = new BufferedWriter(new FileWriter("/home/t-iho/grid/0/tmp/ktsubouc/gps_"+day+"filter.csv"));
 			BufferedReader br2 = new BufferedReader(new FileReader("/home/t-iho/ring.csv"));
+			BufferedWriter bw = new BufferedWriter(new FileWriter("/home/t-iho/grid/0/tmp/ktsubouc/gps_"+day+"filter.csv"));
+			BufferedWriter bw2 = new BufferedWriter(new FileWriter("/home/t-iho/grid/0/tmp/ktsubouc/gps"+day+"stastic.csv"));
+			bw2.write("time interval(m/s),counts");
+			bw2.newLine();
 			String line2 = null;
 			List<Point>boundaries = new ArrayList<Point>();
 			
@@ -109,7 +112,16 @@ public class Datafilter {
 			}
 			
 			TreeSet<String>sortedKey = new TreeSet<String>(userlog.keySet());
-				
+			
+			int[] logsinterval = new int[86400];
+			int[] dist = new int[9];
+			
+			for(int i=0;i<=86399;i++){
+				logsinterval[i] = 0;
+			}
+			
+			int interval = 0;
+			double distance = 0;
 			
 			for(String _did:sortedKey){
 				if(userlog.get(_did).record.size()<101)
@@ -123,9 +135,38 @@ public class Datafilter {
 			                }  
 				 };
 				 Collections.sort(userlog.get(_did).record,comparator);
-				 
-				for(Point points:userlog.get(_did).record){
+				 Date pretime = userlog.get(_did).record.get(0).getTimeStamp();
+				 Point prepoint = userlog.get(_did).record.get(0);
+				 for(Point points:userlog.get(_did).record){
 						//if(users.record.size()>=20){
+						interval = (int)((points.getTimeStamp().getTime()-pretime.getTime())/1000);
+						distance = points.distance(prepoint);
+						
+						if(distance<50){
+							dist[0]++;
+						}else if(distance>=50&&distance<200){
+							dist[1]++;
+						}else if(distance>=200&&distance<500){
+							dist[2]++;
+						}else if(distance>=500&&distance<1000){
+							dist[3]++;
+						}else if(distance>=1000&&distance<2000){
+							dist[4]++;
+						}else if(distance>=2000&&distance<5000){
+							dist[5]++;
+						}else if(distance>=5000&&distance<10000){
+							dist[6]++;
+						}else if(distance>=1000&&distance<50000){
+							dist[7]++;
+						}else if(distance>=50000){
+							dist[8]++;
+						}
+						
+						if(interval<86400)
+						{logsinterval[interval]++;}	
+						
+						pretime = points.getTimeStamp();
+						prepoint = points;
 							String tripline= userlog.get(_did).Uid+","
 											+userlog.get(_did).Did+","
 											+points.lat+","
@@ -151,6 +192,15 @@ public class Datafilter {
 			br.close();
 			bw.close();
 			// statics
+			for(int i=0;i<9;i++){
+				bw2.write(i+","+dist[i]);
+				bw2.newLine();
+			}
+			for(int i=0;i<86399;i++){
+				bw2.write(i+","+logsinterval[i]);
+				bw2.newLine();
+			}
+			bw2.close();
 			System.out.println("Counts of Agents:"+userlog.size());
 			System.out.println("Counts of IDs:"+countid);
 			for(int i=0;i<101;i++){
